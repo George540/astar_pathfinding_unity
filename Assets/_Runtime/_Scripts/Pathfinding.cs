@@ -11,6 +11,8 @@ public class Pathfinding : MonoBehaviour
 {
     public bool _debug;
     [SerializeField] private GridGraph _graph;
+    [SerializeField] private LineRenderer _lineRenderer;
+    [SerializeField] private LineRenderer _smoothLineRenderer;
 
     public AStarType _aStarType;
     //public delegate float Heuristic(Transform start, Transform end);
@@ -39,6 +41,10 @@ public class Pathfinding : MonoBehaviour
                     _goalNode = null;
                     ClearPoints();
                     ClearClusters();
+                    _lineRenderer.positionCount = 0;
+                    _lineRenderer.enabled = false;
+                    _smoothLineRenderer.positionCount = 0;
+                    _smoothLineRenderer.enabled = false;
                 }
 
                 if (_startNode == null)
@@ -55,6 +61,8 @@ public class Pathfinding : MonoBehaviour
                     if (_aStarType == AStarType.Manhattan)
                     {
                         path = FindNodePath(_startNode, _goalNode);
+                        RenderLinePath(_lineRenderer, path);
+                        RenderLinePath(_smoothLineRenderer, SmoothPath(path));
                     }
                     else if (_aStarType == AStarType.Clusters)
                     {
@@ -65,6 +73,8 @@ public class Pathfinding : MonoBehaviour
                             pathNodes.AddRange(cluster._nodeCollection);
                         }
                         path = FindNodePath(_startNode, _goalNode, pathNodes);
+                        RenderLinePath(_lineRenderer, path);
+                        RenderLinePath(_smoothLineRenderer, SmoothPath(path));
                     }
                 }
             }
@@ -74,6 +84,10 @@ public class Pathfinding : MonoBehaviour
                 _goalNode = null;
                 ClearPoints();
                 ClearClusters();
+                _lineRenderer.positionCount = 0;
+                _lineRenderer.enabled = false;
+                _smoothLineRenderer.positionCount = 0;
+                _smoothLineRenderer.enabled = false;
             }
         }
     }
@@ -480,5 +494,43 @@ public class Pathfinding : MonoBehaviour
         var nextPosition = node.position;
         var goalPosition = goal.position;
         return Mathf.Abs(nextPosition.x - goalPosition.x) + Mathf.Abs(nextPosition.z - goalPosition.z);
+    }
+
+    private void RenderLinePath(LineRenderer lineRenderer, List<GridGraphNode> inputPath)
+    {
+        if (!_debug) return;
+        
+        if (!lineRenderer.enabled)
+        {
+            lineRenderer.enabled = true;
+        }
+
+        var array = inputPath.Select(node => node.transform.position).ToArray();
+        lineRenderer.positionCount = array.Length;
+        lineRenderer.SetPositions(array);
+    }
+
+    private List<GridGraphNode> SmoothPath(List<GridGraphNode> inputPath)
+    {
+        if (inputPath.Count <= 2)
+        {
+            return inputPath;
+        }
+
+        var outputPath = new List<GridGraphNode> {inputPath[0]};
+        var inputIndex = 2;
+        
+        while (inputIndex < inputPath.Count - 1)
+        {
+            var direction = inputPath[inputIndex].transform.position - outputPath[outputPath.Count - 1].transform.position;
+            var layer = LayerMask.NameToLayer("Obstacle");
+            if (Physics.Raycast(outputPath[outputPath.Count-1].transform.position, direction, out var hit, direction.magnitude, layer))
+            {
+                outputPath.Add(inputPath[inputIndex - 1]);
+            }
+            inputIndex++;
+        }
+        outputPath.Add(inputPath[inputPath.Count - 1]);
+        return outputPath;
     }
 }
