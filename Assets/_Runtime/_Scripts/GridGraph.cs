@@ -138,11 +138,6 @@ public class GridGraph : MonoBehaviour
         return node.adjacencyList;
     }
 
-    public List<GridGraphNode> GetClusterNeighbors(GridGraphNode node)
-    {
-        return node.adjacencyList.Where(neighbor => neighbor._cluster == node._cluster).ToList();
-    }
-
     public List<GridGraphCluster> GetClusterNeighbors(GridGraphCluster cluster)
     {
         return cluster._adjacentClusters;

@@ -38,6 +38,7 @@ public class Pathfinding : MonoBehaviour
                     _startNode = null;
                     _goalNode = null;
                     ClearPoints();
+                    ClearClusters();
                 }
 
                 if (_startNode == null)
@@ -72,6 +73,7 @@ public class Pathfinding : MonoBehaviour
                 _startNode = null;
                 _goalNode = null;
                 ClearPoints();
+                ClearClusters();
             }
         }
     }
@@ -143,6 +145,7 @@ public class Pathfinding : MonoBehaviour
                 
                 // For A* Clusters, skip if node does not exist in cluster path
                 if (clusterNodes != null && !clusterNodes.Contains(neighbor)) continue;
+                
                 // TODO
 
                 // if neighbor is in closed list then skip
@@ -358,6 +361,10 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
+        foreach (var cluster in _graph.clusters)
+        {
+            cluster.GetComponent<MeshRenderer>().enabled = _debug;
+        }
 
         return path;
     }
@@ -390,6 +397,17 @@ public class Pathfinding : MonoBehaviour
                 {
                     Destroy(node.transform.GetChild(c).gameObject);
                 }
+            }
+        }
+    }
+
+    private void ClearClusters()
+    {
+        if (_aStarType == AStarType.Clusters)
+        {
+            foreach (var cluster in _graph.clusters)
+            {
+                cluster.GetComponent<Renderer>().material.color = new Color(0.2830189f, 0.2830189f, 0.2830189f, 0.3058824f);
             }
         }
     }
