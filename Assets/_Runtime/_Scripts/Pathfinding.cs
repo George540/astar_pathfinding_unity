@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 using System.Collections;
@@ -5,13 +6,13 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-public enum HeuristicType { Clusters, Astar};
+public enum AStarType { Clusters, Manhattan };
 public class Pathfinding : MonoBehaviour
 {
     public bool _debug;
     [SerializeField] private GridGraph _graph;
 
-    public HeuristicType _heuristicType;
+    public AStarType _aStarType;
     //public delegate float Heuristic(Transform start, Transform end);
 
     public GridGraphNode _startNode;
@@ -117,20 +118,20 @@ public class Pathfinding : MonoBehaviour
             var neighbors = _graph.GetNeighbors(current);
             foreach (var neighbor in neighbors)
             {
-                float movement_cost = 1;
+                var movementCost = Heuristic(current.transform, neighbor.transform);
                 // TODO
 
                 // if neighbor is in closed list then skip
                 if (closedODict.Contains(neighbor)) continue;
 
                 // find gNeighbor (g_next)
-                var gNeighbor = gnDict[current] + movement_cost;
+                var gNeighbor = gnDict[current] + movementCost;
 
                 // if needed: update tables, calculate fn, and update open_list using FakePQListInsert() function
                 if (!gnDict.ContainsKey(neighbor) || gNeighbor < gnDict[neighbor])
                 {
                     gnDict[neighbor] = gNeighbor;
-                    fnDict[neighbor] = Heuristic(neighbor.transform, goal.transform) + gnDict[neighbor];
+                    fnDict[neighbor] = gnDict[neighbor] + Heuristic(neighbor.transform, goal.transform);
                     FakePQListInsert(openList, fnDict, neighbor);
                     pathDict[neighbor] = current;
                 }
@@ -257,15 +258,18 @@ public class Pathfinding : MonoBehaviour
 
     private float Heuristic(Transform node, Transform goal)
     {
-        if (_heuristicType == HeuristicType.Astar)
+        switch (_aStarType)
         {
-            var nextPosition = node.position;
-            var goalPosition = goal.position;
-            return Mathf.Abs(nextPosition.x - goalPosition.x) - Mathf.Abs(nextPosition.z - goalPosition.z);
-        }
-        else
-        {
-            return 1;
+            case AStarType.Manhattan:
+            {
+                var nextPosition = node.position;
+                var goalPosition = goal.position;
+                return Mathf.Abs(nextPosition.x - goalPosition.x) + Mathf.Abs(nextPosition.z - goalPosition.z);
+            }
+            case AStarType.Clusters:
+                return 1;
+            default:
+                return 1;
         }
     }
 }
