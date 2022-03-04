@@ -11,6 +11,7 @@ using System.Collections.Generic;
 public class GridGraphNode : MonoBehaviour
 {
     [SerializeField] public List<GridGraphNode> adjacencyList = new List<GridGraphNode>();
+    [SerializeField] public GridGraphCluster _cluster;
 
     private GridGraph graph;
     private GridGraph Graph

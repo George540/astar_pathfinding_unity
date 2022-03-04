@@ -109,4 +109,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   adjacencyList: []
+  _cluster: {fileID: 0}
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}

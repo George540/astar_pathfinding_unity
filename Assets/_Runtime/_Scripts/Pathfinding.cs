@@ -49,13 +49,34 @@ public class Pathfinding : MonoBehaviour
                     _goalNode = hit.collider.gameObject.GetComponent<GridGraphNode>();
 
                     // TODO: use an admissible heuristic and pass it to the FindPath function
-                    var path = FindPath(_startNode, _goalNode);
+                    var path = new List<GridGraphNode>();
+                    var pathCluster = new List<GridGraphCluster>();
+                    if (_aStarType == AStarType.Manhattan)
+                    {
+                        path = FindNodePath(_startNode, _goalNode);
+                    }
+                    else if (_aStarType == AStarType.Clusters)
+                    {
+                        pathCluster = FindClusterPath(_startNode, _goalNode);
+                        var pathNodes = new List<GridGraphNode>();
+                        foreach (var cluster in pathCluster)
+                        {
+                            pathNodes.AddRange(cluster._nodeCollection);
+                        }
+                        path = FindNodePath(_startNode, _goalNode, pathNodes);
+                    }
                 }
+            }
+            else
+            {
+                _startNode = null;
+                _goalNode = null;
+                ClearPoints();
             }
         }
     }
 
-    private List<GridGraphNode> FindPath(GridGraphNode start, GridGraphNode goal, bool isAdmissible = true)
+    private List<GridGraphNode> FindNodePath(GridGraphNode start, GridGraphNode goal, List<GridGraphNode> clusterNodes = null, bool isAdmissible = true)
     {
         if (_graph == null) return new List<GridGraphNode>();
 
@@ -118,7 +139,10 @@ public class Pathfinding : MonoBehaviour
             var neighbors = _graph.GetNeighbors(current);
             foreach (var neighbor in neighbors)
             {
-                var movementCost = Heuristic(current.transform, neighbor.transform);
+                var movementCost = ManhattanDistance(current.transform, neighbor.transform);
+                
+                // For A* Clusters, skip if node does not exist in cluster path
+                if (clusterNodes != null && !clusterNodes.Contains(neighbor)) continue;
                 // TODO
 
                 // if neighbor is in closed list then skip
@@ -195,6 +219,149 @@ public class Pathfinding : MonoBehaviour
         return path;
     }
 
+    private List<GridGraphCluster> FindClusterPath(GridGraphNode start, GridGraphNode goal, bool isAdmissible = true)
+    {
+        if (_graph == null) return new List<GridGraphCluster>();
+
+        // if no heuristic is provided then set heuristic = 0
+        // if (heuristic == null) heuristic = (Transform s, Transform e) => 0;
+        var startCluster = start._cluster;
+        var goalCluster = goal._cluster;
+
+        List<GridGraphCluster> path = null;
+        var solutionFound = false;
+
+        // dictionary to keep track of g(n) values (movement costs)
+        var gnDict = new Dictionary<GridGraphCluster, float> {{startCluster, default}};
+
+        // dictionary to keep track of f(n) values (movement cost + heuristic)
+        var fnDict = new Dictionary<GridGraphCluster, float>
+        {
+            {startCluster, Heuristic(startCluster.transform, goalCluster.transform) + gnDict[startCluster]}
+        };
+
+        // dictionary to keep track of our path (came_from)
+        var pathDict = new Dictionary<GridGraphCluster, GridGraphCluster> {{startCluster, null}};
+
+        var openList = new List<GridGraphCluster> {startCluster};
+
+        var closedODict = new OrderedDictionary(); // use hash set?
+
+        while (openList.Count > 0)
+        {
+            // mimic priority queue and remove from the back of the open list (lowest fn value)
+            var current = openList[openList.Count - 1];
+            openList.RemoveAt(openList.Count - 1);
+
+            closedODict[current] = true;
+
+            // early exit
+            if (current == goalCluster && isAdmissible)
+            {
+                solutionFound = true;
+                break;
+            }
+
+            if (closedODict.Contains(goal))
+            {
+                // early exit strategy if heuristic is not admissible (try to avoid this if possible)
+                float gGoal = gnDict[goalCluster];
+                bool pathIsTheShortest = true;
+
+                foreach (GridGraphCluster entry in openList)
+                {
+                    if (gGoal > gnDict[entry])
+                    {
+                        pathIsTheShortest = false;
+                        break;
+                    }
+                }
+
+                if (pathIsTheShortest) break;
+            }
+
+            var neighbors = _graph.GetClusterNeighbors(current);
+            foreach (var neighbor in neighbors)
+            {
+                var movementCost = ManhattanDistance(current.transform, neighbor.transform);
+                // TODO
+
+                // if neighbor is in closed list then skip
+                if (closedODict.Contains(neighbor)) continue;
+
+                // find gNeighbor (g_next)
+                var gNeighbor = gnDict[current] + movementCost;
+
+                // if needed: update tables, calculate fn, and update open_list using FakePQListInsert() function
+                if (!gnDict.ContainsKey(neighbor) || gNeighbor < gnDict[neighbor])
+                {
+                    gnDict[neighbor] = gNeighbor;
+                    fnDict[neighbor] = gnDict[neighbor] + Heuristic(neighbor.transform, goal.transform);
+                    FakePQListInsert(openList, fnDict, neighbor);
+                    pathDict[neighbor] = current;
+                }
+            }
+        }
+
+        // if the closed list contains the goal node then we have found a solution
+        if (!solutionFound && closedODict.Contains(goal))
+            solutionFound = true;
+
+        if (solutionFound)
+        {
+            // TODO
+            // create the path by traversing the previous nodes in the pathDict
+            // starting at the goal and finishing at the start
+            var current = goalCluster;
+            path = new List<GridGraphCluster>();
+
+            while (current != startCluster)
+            {
+                path = path.Append(current).ToList();
+                current = pathDict[current];
+            }
+            path = path.Append(startCluster).ToList();
+            
+            // reverse the path since we started adding nodes from the goal
+            path.Reverse();
+        }
+
+        if (_debug)
+        {
+            ClearPoints();
+
+            List<Transform> openListPoints = new List<Transform>();
+            foreach (GridGraphCluster cluster in openList)
+            {
+                openListPoints.Add(cluster.transform);
+                cluster.GetComponent<Renderer>().material.color = new Color(0.2830189f, 1.0f, 1.0f, 0.3058824f);
+            }
+
+            List<Transform> closedListPoints = new List<Transform>();
+            foreach (DictionaryEntry entry in closedODict)
+            {
+                GridGraphCluster cluster = (GridGraphCluster) entry.Key;
+                if (solutionFound && !path.Contains(cluster))
+                {
+                    closedListPoints.Add(cluster.transform);
+                    cluster.GetComponent<Renderer>().material.color = new Color(1.0f, 0.2830189f, 0.2830189f, 0.3058824f);
+                }
+            }
+
+            if (solutionFound)
+            {
+                List<Transform> pathPoints = new List<Transform>();
+                foreach (GridGraphCluster cluster in path)
+                {
+                    pathPoints.Add(cluster.transform);
+                    cluster.GetComponent<Renderer>().material.color = new Color(0.2830189f, 1.0f, 0.2830189f, 0.3058824f);
+                }
+            }
+        }
+
+        return path;
+    }
+    
     private void SpawnPoints(List<Transform> points, GameObject prefab, Color color)
     {
         foreach (var t in points)
@@ -255,21 +422,45 @@ public class Pathfinding : MonoBehaviour
             }
         }
     }
+    private static void FakePQListInsert(List<GridGraphCluster> pqList, Dictionary<GridGraphCluster, float> fnDict, GridGraphCluster cluster)
+    {
+        if (pqList.Count == 0)
+            pqList.Add(cluster);
+        else
+        {
+            for (var i = pqList.Count - 1; i >= 0; --i)
+            {
+                if (fnDict[pqList[i]] > fnDict[cluster])
+                {
+                    pqList.Insert(i + 1, cluster);
+                    break;
+                }
+
+                if (i == 0)
+                {
+                    pqList.Insert(0, cluster);
+                }
+            }
+        }
+    }
 
     private float Heuristic(Transform node, Transform goal)
     {
         switch (_aStarType)
         {
             case AStarType.Manhattan:
-            {
-                var nextPosition = node.position;
-                var goalPosition = goal.position;
-                return Mathf.Abs(nextPosition.x - goalPosition.x) + Mathf.Abs(nextPosition.z - goalPosition.z);
-            }
+                return ManhattanDistance(node, goal);
             case AStarType.Clusters:
-                return 1;
+                return ManhattanDistance(node, goal);
             default:
                 return 1;
         }
+    }
+
+    private float ManhattanDistance(Transform node, Transform goal)
+    {
+        var nextPosition = node.position;
+        var goalPosition = goal.position;
+        return Mathf.Abs(nextPosition.x - goalPosition.x) + Mathf.Abs(nextPosition.z - goalPosition.z);
     }
 }

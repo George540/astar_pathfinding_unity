@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 using System.Collections.Generic;
@@ -10,14 +11,29 @@ using System.Linq;
 public class GridGraph : MonoBehaviour
 {
     [SerializeField, HideInInspector] public List<GridGraphNode> nodes = new List<GridGraphNode>();
+    [SerializeField, HideInInspector] public List<GridGraphCluster> clusters = new List<GridGraphCluster>();
     [SerializeField] public GameObject nodePrefab;
 
     public int Count => nodes.Count;
 
+    private void Awake()
+    {
+        foreach (var cluster in GetComponentsInChildren<GridGraphCluster>())
+        {
+            if (!clusters.Contains(cluster))
+            {
+                clusters.Add(cluster);
+            }
+        }
+    }
+
     public void Clear()
     {
         nodes.Clear();
-        gameObject.DestroyChildren();
+        foreach (var node in nodes)
+        {
+            Destroy(node.gameObject);
+        }
     }
 
     public void Remove(GridGraphNode node)
@@ -28,6 +44,16 @@ public class GridGraph : MonoBehaviour
             n.adjacencyList.Remove(node);
 
         nodes.Remove(node);
+    }
+
+    public void Remove(GridGraphCluster cluster)
+    {
+        if (cluster == null || !clusters.Contains(cluster)) return;
+
+        foreach (GridGraphCluster c in cluster._adjacentClusters)
+            cluster._adjacentClusters.Remove(cluster);
+
+        clusters.Remove(cluster);
     }
 
     public void GenerateGrid(bool checkCollisions = true)
@@ -110,6 +136,16 @@ public class GridGraph : MonoBehaviour
     public List<GridGraphNode> GetNeighbors(GridGraphNode node)
     {
         return node.adjacencyList;
+    }
+
+    public List<GridGraphNode> GetClusterNeighbors(GridGraphNode node)
+    {
+        return node.adjacencyList.Where(neighbor => neighbor._cluster == node._cluster).ToList();
+    }
+
+    public List<GridGraphCluster> GetClusterNeighbors(GridGraphCluster cluster)
+    {
+        return cluster._adjacentClusters;
     }
 
 #region grid_generation_properties
