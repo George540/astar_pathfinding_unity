@@ -454,6 +454,14 @@ public class Pathfinding : MonoBehaviour
             }
         }
     }
+    
+    /// <summary>
+    /// mimics a priority queue here by inserting at the right position using a loop
+    /// not a very good solution but ok for this lab example
+    /// </summary>
+    /// <param name="pqList"></param>
+    /// <param name="fnDict"></param>
+    /// <param name="node"></param>
     private static void FakePQListInsert(List<GridGraphCluster> pqList, Dictionary<GridGraphCluster, float> fnDict, GridGraphCluster cluster)
     {
         if (pqList.Count == 0)
@@ -476,10 +484,17 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Heuristic function for estimating node cost for reaching the goal
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="goal"></param>
+    /// <returns>returns cost value in the form of a float</returns>
     private float Heuristic(Transform node, Transform goal)
     {
         switch (_aStarType)
         {
+            // Thought both would had different heuristics..
             case AStarType.Manhattan:
                 return ManhattanDistance(node, goal);
             case AStarType.Clusters:
@@ -489,6 +504,12 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Manhattan Distance used for heuristic (admissible)
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="goal"></param>
+    /// <returns>returns cost value in the form of a float</returns>
     private float ManhattanDistance(Transform node, Transform goal)
     {
         var nextPosition = node.position;
@@ -496,6 +517,11 @@ public class Pathfinding : MonoBehaviour
         return Mathf.Abs(nextPosition.x - goalPosition.x) + Mathf.Abs(nextPosition.z - goalPosition.z);
     }
 
+    /// <summary>
+    /// Link list of nodes with lines
+    /// </summary>
+    /// <param name="lineRenderer"></param>
+    /// <param name="inputPath"></param>
     private void RenderLinePath(LineRenderer lineRenderer, List<GridGraphNode> inputPath)
     {
         if (!_debug) return;
@@ -510,6 +536,11 @@ public class Pathfinding : MonoBehaviour
         lineRenderer.SetPositions(array);
     }
 
+    /// <summary>
+    /// Simple smoothing function using raycasts that detects if nodes are obstructed by obstacles
+    /// </summary>
+    /// <param name="inputPath"></param>
+    /// <returns>returns the smooth version of the path list</returns>
     private List<GridGraphNode> SmoothPath(List<GridGraphNode> inputPath)
     {
         if (inputPath.Count <= 2)
@@ -523,8 +554,9 @@ public class Pathfinding : MonoBehaviour
         while (inputIndex < inputPath.Count - 1)
         {
             var direction = inputPath[inputIndex].transform.position - outputPath[outputPath.Count - 1].transform.position;
-            var layer = LayerMask.NameToLayer("Obstacle");
-            if (Physics.Raycast(outputPath[outputPath.Count-1].transform.position, direction, out var hit, direction.magnitude, layer))
+            var distance = Vector3.Distance(inputPath[inputIndex].transform.position, outputPath[outputPath.Count - 1].transform.position);
+            var layer = LayerMask.GetMask("Obstacle");
+            if (Physics.Raycast(outputPath[outputPath.Count-1].transform.position, direction.normalized, out var hit, distance, layer))
             {
                 outputPath.Add(inputPath[inputIndex - 1]);
             }
