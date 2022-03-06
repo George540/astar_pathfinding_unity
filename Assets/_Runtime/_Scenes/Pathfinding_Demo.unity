@@ -2324,7 +2324,6 @@ MonoBehaviour:
   - {fileID: 2069572010}
   - {fileID: 412203642}
   - {fileID: 637684457}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &57050065
 BoxCollider:
@@ -7522,7 +7521,7 @@ GameObject:
   m_Component:
   - component: {fileID: 187467920}
   - component: {fileID: 187467921}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Obstacles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7568,10 +7567,10 @@ Transform:
   - {fileID: 660840438}
   - {fileID: 778377262}
   - {fileID: 1958993156}
+  - {fileID: 744664002}
   - {fileID: 84515272176900919}
   - {fileID: 1130486738}
   - {fileID: 5952730474964835979}
-  - {fileID: 744664002}
   - {fileID: 665838719}
   - {fileID: 342459259}
   m_Father: {fileID: 0}
@@ -10355,7 +10354,6 @@ MonoBehaviour:
   _adjacentClusters:
   - {fileID: 673118303}
   - {fileID: 2011398847}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &247353535
 BoxCollider:
@@ -10742,7 +10740,6 @@ MonoBehaviour:
   - {fileID: 1062010760}
   - {fileID: 1341414923}
   - {fileID: 2038502413}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &249833477
 BoxCollider:
@@ -14190,7 +14187,6 @@ MonoBehaviour:
   - {fileID: 1182390345}
   - {fileID: 2008285905}
   _adjacentClusters: []
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &303643321
 BoxCollider:
@@ -14974,7 +14970,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 342459258}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -9.479799, y: -1.882823, z: -1.4738212}
+  m_LocalPosition: {x: -9.479799, y: -2, z: -1.4738212}
   m_LocalScale: {x: 81.56285, y: 89.12998, z: 89.12998}
   m_Children: []
   m_Father: {fileID: 187467920}
@@ -18581,7 +18577,6 @@ MonoBehaviour:
   - {fileID: 1789594764}
   _adjacentClusters:
   - {fileID: 57050064}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &412203643
 BoxCollider:
@@ -20567,7 +20562,6 @@ MonoBehaviour:
   - {fileID: 706769977}
   _adjacentClusters:
   - {fileID: 1863334862}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &457499526
 BoxCollider:
@@ -24477,6 +24471,7 @@ MonoBehaviour:
   _graph: {fileID: 519168784}
   _lineRenderer: {fileID: 519168787}
   _smoothLineRenderer: {fileID: 187467921}
+  _aiAgent: {fileID: 0}
   _aStarType: 1
   _startNode: {fileID: 0}
   _goalNode: {fileID: 0}
@@ -28507,7 +28502,6 @@ MonoBehaviour:
   - {fileID: 57050064}
   - {fileID: 1426832185}
   - {fileID: 2038502413}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &637684458
 BoxCollider:
@@ -29980,7 +29974,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 665838718}
   m_LocalRotation: {x: -0, y: 0.7072302, z: 0.7069834, w: 0}
-  m_LocalPosition: {x: -9.2838, y: -2.1228004, z: -8.382101}
+  m_LocalPosition: {x: -9.2838, y: -2, z: -8.382101}
   m_LocalScale: {x: 80.75291, y: 63.30455, z: 79.13071}
   m_Children: []
   m_Father: {fileID: 187467920}
@@ -30282,7 +30276,6 @@ MonoBehaviour:
   - {fileID: 1750326949}
   - {fileID: 236971645}
   _adjacentClusters: []
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &673118304
 BoxCollider:
@@ -32559,7 +32552,7 @@ GameObject:
   - component: {fileID: 744664001}
   - component: {fileID: 744664000}
   - component: {fileID: 744663999}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32577,7 +32570,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &744664000
@@ -32641,7 +32634,7 @@ Transform:
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 187467920}
-  m_RootOrder: 31
+  m_RootOrder: 28
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &748417427
 GameObject:
@@ -35612,7 +35605,6 @@ MonoBehaviour:
   - {fileID: 1400380469}
   _adjacentClusters:
   - {fileID: 2069572010}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &813133191
 BoxCollider:
@@ -44544,7 +44536,6 @@ MonoBehaviour:
   _adjacentClusters:
   - {fileID: 1062010760}
   - {fileID: 249833476}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &1062010761
 BoxCollider:
@@ -48513,11 +48504,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1130486737}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 8.8872, y: -1.882823, z: 4.5530896}
+  m_LocalPosition: {x: 8.8872, y: -2, z: 4.5530896}
   m_LocalScale: {x: 102.61537, y: 89.13, z: 89.13}
   m_Children: []
   m_Father: {fileID: 187467920}
-  m_RootOrder: 29
+  m_RootOrder: 30
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &1130486739
 MeshCollider:
@@ -49074,7 +49065,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1137543184}
   m_LocalRotation: {x: -0, y: -0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 15.46, y: -1.382823, z: 0.11}
+  m_LocalPosition: {x: 15.46, y: -1.3828, z: 0.11}
   m_LocalScale: {x: 30.073523, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 187467920}
@@ -51093,7 +51084,6 @@ MonoBehaviour:
   - {fileID: 1132201054}
   _adjacentClusters:
   - {fileID: 2069572010}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &1175926605
 BoxCollider:
@@ -56188,7 +56178,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1284235704}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0127, y: -1.382823, z: 15.6}
+  m_LocalPosition: {x: 0.0127, y: -1.3828, z: 15.6}
   m_LocalScale: {x: 31.89135, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 187467920}
@@ -58778,7 +58768,6 @@ MonoBehaviour:
   - {fileID: 802012299}
   _adjacentClusters:
   - {fileID: 249833476}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &1341414924
 BoxCollider:
@@ -60550,7 +60539,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1381440946}
   m_LocalRotation: {x: -0, y: -0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -15.42, y: -1.382823, z: 0.11}
+  m_LocalPosition: {x: -15.42, y: -1.3828, z: 0.11}
   m_LocalScale: {x: 30.073523, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 187467920}
@@ -62167,7 +62156,6 @@ MonoBehaviour:
   _adjacentClusters:
   - {fileID: 637684457}
   - {fileID: 1062010760}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &1426832186
 BoxCollider:
@@ -69546,7 +69534,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1627455060}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0127, y: -1.382823, z: -15.32}
+  m_LocalPosition: {x: 0.0127, y: -1.3828, z: -15.32}
   m_LocalScale: {x: 31.89135, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 187467920}
@@ -75092,7 +75080,6 @@ MonoBehaviour:
   - {fileID: 1842302947}
   - {fileID: 1248042379}
   _adjacentClusters: []
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &1747919939
 BoxCollider:
@@ -79351,7 +79338,6 @@ MonoBehaviour:
   - {fileID: 2011398847}
   - {fileID: 457499525}
   - {fileID: 2038502413}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &1863334863
 BoxCollider:
@@ -86436,7 +86422,6 @@ MonoBehaviour:
   - {fileID: 1863334862}
   - {fileID: 247353534}
   - {fileID: 2038502413}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &2011398848
 BoxCollider:
@@ -87795,7 +87780,6 @@ MonoBehaviour:
   - {fileID: 1863334862}
   - {fileID: 303643320}
   - {fileID: 2011398847}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &2038502414
 BoxCollider:
@@ -89706,7 +89690,6 @@ MonoBehaviour:
   - {fileID: 1175926604}
   - {fileID: 57050064}
   - {fileID: 673118303}
-  _clusterCost: 0
   _nodeGizmoColor: {r: 1, g: 1, b: 1, a: 0.5}
 --- !u!65 &2069572011
 BoxCollider:
@@ -91885,11 +91868,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 749729068714508685}
   m_LocalRotation: {x: -0, y: 0.7072302, z: 0.7069834, w: 0}
-  m_LocalPosition: {x: 9.3962, y: -2.1228, z: -3.4341}
+  m_LocalPosition: {x: 9.3962, y: -2, z: -3.4341}
   m_LocalScale: {x: 131.1396, y: 138.69975, z: 139.98}
   m_Children: []
   m_Father: {fileID: 187467920}
-  m_RootOrder: 28
+  m_RootOrder: 29
   m_LocalEulerAnglesHint: {x: -89.98, y: 180, z: 0}
 --- !u!1 &749729068714508685
 GameObject:
@@ -92022,11 +92005,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6473793070043989041}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -10.5903, y: -1.8828, z: 11.1104}
+  m_LocalPosition: {x: -10.5903, y: -2, z: 11.1104}
   m_LocalScale: {x: 85.07459, y: 85.074585, z: 85.074585}
   m_Children: []
   m_Father: {fileID: 187467920}
-  m_RootOrder: 30
+  m_RootOrder: 31
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6473793070043989041
 GameObject:

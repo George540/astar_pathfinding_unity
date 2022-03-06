@@ -8,8 +8,7 @@ public class GridGraphCluster : MonoBehaviour
 {
     [SerializeField] public List<GridGraphNode> _nodeCollection = new List<GridGraphNode>();
     [SerializeField] public List<GridGraphCluster> _adjacentClusters = new List<GridGraphCluster>();
-    public float _clusterCost;
-    
+
     private GridGraph graph;
     
     private void Awake()

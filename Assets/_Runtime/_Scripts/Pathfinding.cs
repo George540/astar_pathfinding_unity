@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using AI;
 
 public enum AStarType { Clusters, Manhattan };
 public class Pathfinding : MonoBehaviour
@@ -13,6 +12,8 @@ public class Pathfinding : MonoBehaviour
     [SerializeField] private GridGraph _graph;
     [SerializeField] private LineRenderer _lineRenderer;
     [SerializeField] private LineRenderer _smoothLineRenderer;
+    [SerializeField] private AIAgent _aiAgent;
+    [SerializeField] private GridGraphCluster[] _smallRooms;
 
     public AStarType _aStarType;
     //public delegate float Heuristic(Transform start, Transform end);
@@ -24,9 +25,19 @@ public class Pathfinding : MonoBehaviour
     public GameObject _pathPointPrefab;
     private Camera _camera;
 
+    public int _currentPathIndex;
+    private List<GridGraphNode> _smoothPath = new List<GridGraphNode>();
+
     private void Start()
     {
         _camera = Camera.main;
+        if (_aiAgent != null)
+        {
+            var startRoom = _smallRooms[Random.Range(0, _smallRooms.Length)];
+            _startNode = startRoom._nodeCollection[Random.Range(0, _smallRooms.Length)];
+            _aiAgent.transform.position = _startNode.transform.position;
+            _currentPathIndex = 1;
+        }
     }
 
     private void Update()
@@ -37,7 +48,11 @@ public class Pathfinding : MonoBehaviour
             {
                 if (_startNode != null && _goalNode != null)
                 {
-                    _startNode = null;
+                    if (_aiAgent == null)
+                    {
+                        _startNode = null;
+                    }
+                    SetNearestNode(hit.transform.gameObject);
                     _goalNode = null;
                     ClearPoints();
                     ClearClusters();
@@ -45,6 +60,7 @@ public class Pathfinding : MonoBehaviour
                     _lineRenderer.enabled = false;
                     _smoothLineRenderer.positionCount = 0;
                     _smoothLineRenderer.enabled = false;
+                    _currentPathIndex = 1;
                 }
 
                 if (_startNode == null)
@@ -58,11 +74,18 @@ public class Pathfinding : MonoBehaviour
                     // TODO: use an admissible heuristic and pass it to the FindPath function
                     var path = new List<GridGraphNode>();
                     var pathCluster = new List<GridGraphCluster>();
+                    var smoothPath = new List<GridGraphNode>();
                     if (_aStarType == AStarType.Manhattan)
                     {
                         path = FindNodePath(_startNode, _goalNode);
                         RenderLinePath(_lineRenderer, path);
-                        RenderLinePath(_smoothLineRenderer, SmoothPath(path));
+                        smoothPath = SmoothPath(path);
+                        RenderLinePath(_smoothLineRenderer, smoothPath);
+                        if (_aiAgent != null)
+                        {
+                            _aiAgent.trackedTarget = smoothPath[_currentPathIndex].transform;
+                        }
+                        _smoothPath = smoothPath;
                     }
                     else if (_aStarType == AStarType.Clusters)
                     {
@@ -74,13 +97,26 @@ public class Pathfinding : MonoBehaviour
                         }
                         path = FindNodePath(_startNode, _goalNode, pathNodes);
                         RenderLinePath(_lineRenderer, path);
-                        RenderLinePath(_smoothLineRenderer, SmoothPath(path));
+                        smoothPath = SmoothPath(path);
+                        RenderLinePath(_smoothLineRenderer, smoothPath);
+                        if (_aiAgent != null)
+                        {
+                            _aiAgent.trackedTarget = smoothPath[_currentPathIndex].transform;
+                        }
+                        _smoothPath = smoothPath;
                     }
                 }
             }
             else
             {
-                _startNode = null;
+                if (_aiAgent == null)
+                {
+                    _startNode = null;
+                }
+                else
+                {
+                    SetNearestNode(null);
+                }
                 _goalNode = null;
                 ClearPoints();
                 ClearClusters();
@@ -88,7 +124,12 @@ public class Pathfinding : MonoBehaviour
                 _lineRenderer.enabled = false;
                 _smoothLineRenderer.positionCount = 0;
                 _smoothLineRenderer.enabled = false;
+                _currentPathIndex = 1;
             }
+        }
+        if (_aiAgent != null && _aiAgent.trackedTarget != null && _smoothPath.Count > 0)
+        {
+            ProcessAgentPathfinding(_smoothPath);
         }
     }
 
@@ -564,5 +605,38 @@ public class Pathfinding : MonoBehaviour
         }
         outputPath.Add(inputPath[inputPath.Count - 1]);
         return outputPath;
+    }
+
+    private void ProcessAgentPathfinding(List<GridGraphNode> smoothPath)
+    {
+        if (!_aiAgent.HasArrivedAtTarget() || _currentPathIndex >= smoothPath.Count - 1) return;
+        
+        _currentPathIndex++;
+        _aiAgent.trackedTarget = smoothPath[_currentPathIndex].transform;
+    }
+
+    private void SetNearestNode(GameObject hit)
+    {
+        if (hit == null || hit.transform.gameObject.GetComponent<GridGraphNode>() == null)
+        {
+            _goalNode = null;
+            _smoothPath = null;
+            _aiAgent.trackedTarget = null;
+        }
+
+        var hitColliders = Physics.OverlapSphere(_aiAgent.transform.position, 1.0f);
+        var distance = Mathf.Infinity;
+        GridGraphNode nearest = null;
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.transform.gameObject.TryGetComponent<GridGraphNode>(out var node) && 
+                (_aiAgent.transform.position - hitCollider.transform.position).magnitude < distance)
+            {
+                var nodeTransform = node.transform;
+                distance = (_aiAgent.transform.position - nodeTransform.position).magnitude;
+                nearest = hitCollider.GetComponent<GridGraphNode>();
+            }
+        }
+        _startNode = nearest;
     }
 }
