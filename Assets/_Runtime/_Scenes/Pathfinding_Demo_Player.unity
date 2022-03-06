@@ -24477,7 +24477,7 @@ MonoBehaviour:
   - {fileID: 412203642}
   - {fileID: 1341414923}
   - {fileID: 1747919938}
-  _aStarType: 1
+  _aStarType: 0
   _startNode: {fileID: 0}
   _goalNode: {fileID: 0}
   _openPointPrefab: {fileID: 1294200121035956867, guid: 68874d4a63745324e9cb221d8542328d,
@@ -53065,13 +53065,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1223226195}
-  m_LocalRotation: {x: 0.3535534, y: -0.61237246, z: 0.3535534, w: 0.61237246}
-  m_LocalPosition: {x: 33, y: 41, z: 0}
+  m_LocalRotation: {x: 0.4067742, y: -0.57838976, z: 0.4067742, w: 0.57838976}
+  m_LocalPosition: {x: 25, y: 53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 60, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 70.236, y: -90, z: 0}
 --- !u!1 &1224376108
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,8 +11,8 @@ namespace AI
         {
             if (debug)
             {
-                DebugUtil.DrawCircle(agent.TargetPosition, transform.up, Color.yellow, stopRadius);
-                DebugUtil.DrawCircle(agent.TargetPosition, transform.up, Color.magenta, slowRadius);
+                DebugUtil.DrawCircle(agent.trackedTarget.position, transform.up, Color.yellow, stopRadius);
+                DebugUtil.DrawCircle(agent.trackedTarget.position, transform.up, Color.magenta, slowRadius);
             }
         }
 
@@ -23,7 +23,7 @@ namespace AI
             var output = base.GetKinematic(agent);
 
             // TODO: calculate linear component
-            Vector3 desiredVelocity = agent.TargetPosition - transform.position;
+            Vector3 desiredVelocity = agent.trackedTarget.position - transform.position;
             var distance = desiredVelocity.magnitude;
             desiredVelocity = desiredVelocity.normalized * agent.maxSpeed;
 
@@ -31,7 +31,7 @@ namespace AI
             {
                 desiredVelocity *= 0;
             }
-            else if (distance < slowRadius)
+            if (distance < slowRadius)
             {
                 desiredVelocity *= (distance / slowRadius);
             }

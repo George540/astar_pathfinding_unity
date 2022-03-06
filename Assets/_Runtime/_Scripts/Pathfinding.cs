@@ -36,6 +36,7 @@ public class Pathfinding : MonoBehaviour
             var startRoom = _smallRooms[Random.Range(0, _smallRooms.Length)];
             _startNode = startRoom._nodeCollection[Random.Range(0, _smallRooms.Length)];
             _aiAgent.transform.position = _startNode.transform.position;
+            _aiAgent.trackedTarget = _startNode.transform;
             _currentPathIndex = 1;
         }
         // MAKE SURE YOU HAVE YOUR ASTAR TYPE SELECTED BEFORE RUNNING THE GAME
@@ -104,6 +105,7 @@ public class Pathfinding : MonoBehaviour
                         RenderLinePath(_smoothLineRenderer, smoothPath);
                         if (_aiAgent != null)
                         {
+                   
                             _aiAgent.trackedTarget = smoothPath[_currentPathIndex].transform;
                         }
                         _smoothPath = smoothPath;
@@ -130,7 +132,7 @@ public class Pathfinding : MonoBehaviour
                 _currentPathIndex = 1;
             }
         }
-        if (_aiAgent != null && _aiAgent.trackedTarget != null && _smoothPath.Count > 0)
+        if (_aiAgent != null && _aiAgent.trackedTarget != _aiAgent.transform && _smoothPath.Count > 0)
         {
             ProcessAgentPathfinding(_smoothPath);
         }
@@ -209,7 +211,7 @@ public class Pathfinding : MonoBehaviour
             {
                 // The Manhattan Distance also ensures that diagonal edges are double the cost
                 var movementCost = ManhattanDistance(current.transform, neighbor.transform);
-                
+
                 // For A* Clusters, skip if node does not exist in cluster path
                 if (clusterNodes != null && !clusterNodes.Contains(neighbor)) continue;
                 
@@ -651,7 +653,7 @@ public class Pathfinding : MonoBehaviour
         {
             _goalNode = null;
             _smoothPath = null;
-            _aiAgent.trackedTarget = null;
+            _aiAgent.trackedTarget = _aiAgent.transform;
         }
 
         // Track the nearest nodes in range and pick the closest one to set as starting node
