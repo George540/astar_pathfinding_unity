@@ -24477,7 +24477,7 @@ MonoBehaviour:
   - {fileID: 412203642}
   - {fileID: 1341414923}
   - {fileID: 1747919938}
-  _aStarType: 0
+  _aStarType: 1
   _startNode: {fileID: 0}
   _goalNode: {fileID: 0}
   _openPointPrefab: {fileID: 1294200121035956867, guid: 68874d4a63745324e9cb221d8542328d,

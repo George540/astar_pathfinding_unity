@@ -38,6 +38,9 @@ public class Pathfinding : MonoBehaviour
             _aiAgent.transform.position = _startNode.transform.position;
             _currentPathIndex = 1;
         }
+        // MAKE SURE YOU HAVE YOUR ASTAR TYPE SELECTED BEFORE RUNNING THE GAME
+        // Don't switch astar type during runtime
+        SwitchMeshRenderers();
     }
 
     private void Update()
@@ -667,5 +670,16 @@ public class Pathfinding : MonoBehaviour
             }
         }
         _startNode = nearest;
+    }
+
+    private void SwitchMeshRenderers()
+    {
+        foreach (var cluster in _graph.clusters)
+        {
+            if (cluster.TryGetComponent<MeshRenderer>(out var meshRenderer))
+            {
+                meshRenderer.enabled = _aStarType == AStarType.Clusters;
+            }
+        }
     }
 }
