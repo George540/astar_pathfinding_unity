@@ -133,6 +133,14 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Creates a path list from the start to the end by using the Heuristics, etc
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="goal"></param>
+    /// <param name="clusterNodes"></param>
+    /// <param name="isAdmissible"></param>
+    /// <returns></returns>
     private List<GridGraphNode> FindNodePath(GridGraphNode start, GridGraphNode goal, List<GridGraphNode> clusterNodes = null, bool isAdmissible = true)
     {
         if (_graph == null) return new List<GridGraphNode>();
@@ -196,6 +204,7 @@ public class Pathfinding : MonoBehaviour
             var neighbors = _graph.GetNeighbors(current);
             foreach (var neighbor in neighbors)
             {
+                // The Manhattan Distance also ensures that diagonal edges are double the cost
                 var movementCost = ManhattanDistance(current.transform, neighbor.transform);
                 
                 // For A* Clusters, skip if node does not exist in cluster path
@@ -277,6 +286,13 @@ public class Pathfinding : MonoBehaviour
         return path;
     }
 
+    /// <summary>
+    /// Same as the above method, but for clusters
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="goal"></param>
+    /// <param name="isAdmissible"></param>
+    /// <returns></returns>
     private List<GridGraphCluster> FindClusterPath(GridGraphNode start, GridGraphNode goal, bool isAdmissible = true)
     {
         if (_graph == null) return new List<GridGraphCluster>();
@@ -596,6 +612,7 @@ public class Pathfinding : MonoBehaviour
         {
             var direction = inputPath[inputIndex].transform.position - outputPath[outputPath.Count - 1].transform.position;
             var distance = Vector3.Distance(inputPath[inputIndex].transform.position, outputPath[outputPath.Count - 1].transform.position);
+            // Ensure only Obstacle objects are an Obstacle
             var layer = LayerMask.GetMask("Obstacle");
             if (Physics.Raycast(outputPath[outputPath.Count-1].transform.position, direction.normalized, out var hit, distance, layer))
             {
@@ -607,14 +624,24 @@ public class Pathfinding : MonoBehaviour
         return outputPath;
     }
 
+    /// <summary>
+    /// In the smoothed path, the current node index is incremented every time it reaches the previous one,
+    /// until the last one (the goal)
+    /// </summary>
+    /// <param name="smoothPath"></param>
     private void ProcessAgentPathfinding(List<GridGraphNode> smoothPath)
     {
         if (!_aiAgent.HasArrivedAtTarget() || _currentPathIndex >= smoothPath.Count - 1) return;
         
+        // If agent arrives at the current smoothed node, go to the next one
         _currentPathIndex++;
         _aiAgent.trackedTarget = smoothPath[_currentPathIndex].transform;
     }
 
+    /// <summary>
+    /// Set the nearest node that corresponds to the agent's position when recalculating a newly selected path
+    /// </summary>
+    /// <param name="hit"></param>
     private void SetNearestNode(GameObject hit)
     {
         if (hit == null || hit.transform.gameObject.GetComponent<GridGraphNode>() == null)
@@ -624,11 +651,13 @@ public class Pathfinding : MonoBehaviour
             _aiAgent.trackedTarget = null;
         }
 
+        // Track the nearest nodes in range and pick the closest one to set as starting node
         var hitColliders = Physics.OverlapSphere(_aiAgent.transform.position, 1.0f);
         var distance = Mathf.Infinity;
         GridGraphNode nearest = null;
         foreach (var hitCollider in hitColliders)
         {
+            // Check if object is a node
             if (hitCollider.transform.gameObject.TryGetComponent<GridGraphNode>(out var node) && 
                 (_aiAgent.transform.position - hitCollider.transform.position).magnitude < distance)
             {

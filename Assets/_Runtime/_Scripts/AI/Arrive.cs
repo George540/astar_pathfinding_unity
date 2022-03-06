@@ -27,7 +27,7 @@ namespace AI
             var distance = desiredVelocity.magnitude;
             desiredVelocity = desiredVelocity.normalized * agent.maxSpeed;
 
-            if (distance <= stopRadius)
+            if (distance <= stopRadius || agent.trackedTarget == null)
             {
                 desiredVelocity *= 0;
             }

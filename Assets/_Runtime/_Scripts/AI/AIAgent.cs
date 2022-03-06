@@ -23,8 +23,6 @@ namespace AI
         public Transform trackedTarget;
         public Vector3 targetPosition;
 
-        public GridGraph _graph;
-
         public Vector3 TargetPosition
         {
             get => trackedTarget != null ? trackedTarget.position : transform.position;

@@ -13,6 +13,7 @@ public class GridGraphCluster : MonoBehaviour
     
     private void Awake()
     {
+        // Assign nodes to the corresponding cluster (itself) and assign that cluster to the node
         foreach (var node in GetComponentsInChildren<GridGraphNode>())
         {
             if (!_nodeCollection.Contains(node))
