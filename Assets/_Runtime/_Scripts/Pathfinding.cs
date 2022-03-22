@@ -218,7 +218,7 @@ public class Pathfinding : MonoBehaviour
                 // TODO
 
                 // if neighbor is in closed list then skip
-                if (closedODict.Contains(neighbor)) continue;
+                //if (closedODict.Contains(neighbor)) continue;
 
                 // find gNeighbor (g_next)
                 var gNeighbor = gnDict[current] + movementCost;
