@@ -1,5 +1,7 @@
 COMP 476 Programming Assignment 2 - George Mavroeidis
 
+WARNING: Please notify me if you wanna use my project as a reference
+
 Professor: Kaustubha Mendhurwar
 Teacher Assistant: Daniel Rinaldi
 
