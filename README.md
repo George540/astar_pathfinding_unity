@@ -1,9 +1,6 @@
 COMP 476 Programming Assignment 2 - George Mavroeidis
 
-WARNING: Please notify me if you wanna use my project as a reference
-
-Professor: Kaustubha Mendhurwar
-Teacher Assistant: Daniel Rinaldi
+WARNING: Please notify me if you wanna use my project as a reference!!!!!
 
 The purpose of the program was to experiment and study different pathfinding techniques and implement them in a maze-like context with a steering AI Agent.
 Code uses base structure from Lab 04 (made by Daniel Rinaldi) for setting up the game loop and the graph generation, but the pathfinding was left for the student
@@ -62,4 +59,3 @@ but there is also a kinematic movement implemented as well. Once the agent reach
 The screenshots folder shows two fill examples between the Manhattan and Cluster pathfinding. It is obvious that the cluster approach utilizes less nodes.
 
 George Mavroeidis
-40065356
