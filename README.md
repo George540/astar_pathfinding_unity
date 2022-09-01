@@ -1,5 +1,3 @@
-COMP 476 Programming Assignment 2 - George Mavroeidis
-
 WARNING: Please notify me if you wanna use my project as a reference!!!!!
 
 The purpose of the program was to experiment and study different pathfinding techniques and implement them in a maze-like context with a steering AI Agent.
